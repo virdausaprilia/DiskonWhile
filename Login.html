@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Login Sederhana</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #4facfe, #00f2fe); /* Gradasi biru */
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 600px;
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-top: 10px;
+        }
+        input, button {
+            padding: 10px;
+            margin-top: 5px;
+            border: none;
+            border-radius: 5px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid white;
+            text-align: left;
+        }
+        th {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .hidden {
+            display: none;
+        }
+        .btn-back {
+            margin-top: 20px;
+            background: #28a745;
+        }
+        .btn-back:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="form-section">
+            <h1>Form Login Biodata</h1>
+            <form id="biodata-form">
+                <label for="nama">Nama:</label>
+                <input type="text" id="nama" required>
+
+                <label for="tanggal-lahir">Tanggal Lahir:</label>
+                <input type="date" id="tanggal-lahir" required>
+
+                <label for="no-telp">No Telp:</label>
+                <input type="tel" id="no-telp" required>
+
+                <label for="alamat">Alamat:</label>
+                <input type="text" id="alamat" required>
+
+                <label for="email">Email:</label>
+                <input type="email" id="email" required>
+
+                <button type="submit">Simpan dan Lihat Biodata</button>
+            </form>
+        </div>
+
+        <div id="table-section" class="hidden">
+            <h2>Biodata Lengkap</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Field</th>
+                        <th>Data</th>
+                    </tr>
+                </thead>
+                <tbody id="biodata-table">
+                    <!-- Data akan diisi oleh JavaScript -->
+                </tbody>
+            </table>
+            <button class="btn-back" onclick="showForm()">Kembali ke Form Utama</button>
+            <button class="btn-back" onclick="showTable()">Lihat Tabel Lagi</button>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('biodata-form');
+        const formSection = document.getElementById('form-section');
+        const tableSection = document.getElementById('table-section');
+        const tableBody = document.getElementById('biodata-table');
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // Ambil data dari form
+            const nama = document.getElementById('nama').value;
+            const tanggalLahir = document.getElementById('tanggal-lahir').value;
+            const noTelp = document.getElementById('no-telp').value;
+            const alamat = document.getElementById('alamat').value;
+            const email = document.getElementById('email').value;
+
+            // Simpan ke localStorage (opsional, untuk persistensi)
+            localStorage.setItem('biodata', JSON.stringify({ nama, tanggalLahir, noTelp, alamat, email }));
+
+            // Tampilkan tabel
+            displayTable(nama, tanggalLahir, noTelp, alamat, email);
+            formSection.classList.add('hidden');
+            tableSection.classList.remove('hidden');
+        });
+
+        function displayTable(nama, tanggalLahir, noTelp, alamat, email) {
+            tableBody.innerHTML = `
+                <tr><td>Nama</td><td>${nama}</td></tr>
+                <tr><td>Tanggal Lahir</td><td>${tanggalLahir}</td></tr>
+                <tr><td>No Telp</td><td>${noTelp}</td></tr>
+                <tr><td>Alamat</td><td>${alamat}</td></tr>
+                <tr><td>Email</td><td>${email}</td></tr>
+            `;
+        }
+
+        function showForm() {
+            tableSection.classList.add('hidden');
+            formSection.classList.remove('hidden');
+        }
+
+        function showTable() {
+            // Jika ada data di localStorage, tampilkan
+            const biodata = JSON.parse(localStorage.getItem('biodata'));
+            if (biodata) {
+                displayTable(biodata.nama, biodata.tanggalLahir, biodata.noTelp, biodata.alamat, biodata.email);
+                formSection.classList.add('hidden');
+                tableSection.classList.remove('hidden');
+            } else {
+                alert('Tidak ada data biodata tersimpan. Isi form terlebih dahulu.');
+            }
+        }
+
+        // Load data jika ada saat halaman dimuat
+        window.onload = function() {
+            const biodata = JSON.parse(localStorage.getItem('biodata'));
+            if (biodata) {
+                // Opsional: Isi form dengan data tersimpan
+                document.getElementById('nama').value = biodata.nama;
+                document.getElementById('tanggal-lahir').value = biodata.tanggalLahir;
+                document.getElementById('no-telp').value = biodata.noTelp;
+                document.getElementById('alamat').value = biodata.alamat;
+                document.getElementById('email').value = biodata.email;
+            }
+        };
+    </script>
+</body>
+</html>
